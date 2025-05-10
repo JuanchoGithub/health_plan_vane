@@ -37,6 +37,13 @@ def plan_maestro():
 
     st.write("### Recursos")
     st.write("- Descargue el plan completo en formato PDF.")
-    st.download_button(label="Descargar Plan PDF", data="Este es un marcador de posición para el contenido del PDF.", file_name="Plan_Maestro.pdf", mime="application/pdf")
+    st.download_button(
+        label="Descargar Plan PDF",
+        data="Este es un marcador de posición para el contenido del PDF.",
+        file_name="Plan_Maestro.pdf",
+        mime="application/pdf",
+        key="download_plan_pdf",
+        aria_label="Download Plan PDF"
+    )
 
 plan_maestro()

@@ -26,5 +26,4 @@ with open(file_path, "r", encoding="utf-8") as file:
     markdown_content = file.read()
 
 # Streamlit page to display the content
-#st.title("Plan de 3 meses para aliviar la ciática y aumentar la masa muscular")
-st.markdown(markdown_content)
+st.markdown(markdown_content, unsafe_allow_html=True, key="document_markdown")

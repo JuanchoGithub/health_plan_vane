@@ -1,0 +1,100 @@
+### Comprehensive Test Plan for Health Plan App
+
+#### 1. Authentication Tests
+- **Registration:**
+  - Test successful registration with valid inputs.
+  - Test registration with an existing username (should fail).
+  - Test registration with invalid inputs (e.g., empty fields, invalid weight).
+- **Login:**
+  - Test successful login with valid credentials.
+  - Test login with invalid credentials (should fail).
+  - Test session persistence using cookies.
+- **Logout:**
+  - Test successful logout and session invalidation.
+
+#### 2. Dashboard Tests
+- **Daily Overview:**
+  - Verify the correct display of daily exercises based on the current phase and week.
+  - Verify the calculation of daily calorie and protein goals based on user weight.
+  - Test the display of completed vs. pending exercises.
+  - Test the display of logged meals and remaining calorie/protein goals.
+- **Exercise Logging:**
+  - Test marking an exercise as completed.
+  - Test logging a custom exercise with sets, reps, and duration.
+  - Verify that completed exercises are reflected in the dashboard.
+- **Meal Logging:**
+  - Test logging a meal with calories and protein.
+  - Verify that logged meals update the calorie/protein progress.
+- **Warnings:**
+  - Test warnings for incomplete exercises or unmet calorie/protein goals.
+
+#### 3. Plan Maestro Tests
+- Verify the correct display of the 3-month plan with phases and weekly goals.
+- Test the download functionality for the plan PDF.
+
+#### 4. Documento Completo Tests
+- Verify the correct rendering of the markdown content.
+- Test navigation to this page and back to the dashboard.
+
+#### 5. Progreso Semanal/Mensual Tests
+- **Weekly Progress:**
+  - Verify the correct aggregation of exercise and meal logs for the current week.
+  - Test the display of weekly trends (e.g., bar charts for calories and protein).
+- **Monthly Progress:**
+  - Verify the correct aggregation of exercise and meal logs for the current month.
+  - Test the display of monthly trends (e.g., line charts for calories and protein).
+- **Filters:**
+  - Test filtering progress data by custom date ranges.
+
+#### 6. Profile Management Tests
+- Verify the correct display of user profile information (e.g., start date, current weight).
+- Test updating the user's weight and verifying the recalculation of protein goals.
+- Test error handling for invalid weight inputs.
+
+#### 7. Backfill Data Tests
+- **Exercise Backfill:**
+  - Test adding past exercises with sets, reps, duration, and pain notes.
+  - Verify that backfilled exercises are reflected in the weekly/monthly progress.
+- **Meal Backfill:**
+  - Test adding past meals with calories and protein.
+  - Verify that backfilled meals are reflected in the weekly/monthly progress.
+
+#### 8. Error Handling Tests
+- Test error messages for invalid inputs across all forms (e.g., empty fields, invalid dates).
+- Test handling of database errors (e.g., duplicate entries, missing data).
+
+#### 9. Navigation Tests
+- Test navigation between all pages (Dashboard, Plan Maestro, Documento Completo, etc.).
+- Verify that the navigation state persists after a page reload.
+
+#### 10. Database Tests
+- Verify the correct creation and initialization of all database tables.
+- Test the insertion, update, and retrieval of user, exercise, and meal data.
+- Test the handling of duplicate entries and data integrity constraints.
+
+#### 11. UI/UX Tests
+- Verify the responsiveness of the app on different screen sizes.
+- Test the correct rendering of all UI components (e.g., buttons, forms, charts).
+- Test the accessibility of the app (e.g., keyboard navigation, screen reader compatibility).
+
+#### 12. Performance Tests
+- Test the app's performance with a large number of users, exercises, and meal logs.
+- Verify the loading time of pages with complex queries (e.g., weekly/monthly progress).
+
+#### 13. Security Tests
+- Test password hashing and storage in the database.
+- Verify that sensitive data (e.g., passwords, cookies) is not exposed in logs or network requests.
+- Test session management and prevention of unauthorized access.
+
+#### 14. Integration Tests
+- Test the integration of the Streamlit app with the SQLite database.
+- Verify the correct interaction between different components (e.g., dashboard and profile management).
+
+#### 15. End-to-End Tests
+- Simulate a complete user journey:
+  1. Register a new user.
+  2. Log in and navigate to the dashboard.
+  3. Log exercises and meals for a day.
+  4. View weekly and monthly progress.
+  5. Update the profile and backfill data.
+  6. Log out and verify session invalidation.

@@ -55,8 +55,8 @@ def profile_management():
         st.write(f"**Peso Actual:** {current_weight_kg} kg")
 
         st.subheader("Actualizar Peso")
-        new_weight = st.number_input("Nuevo Peso (kg)", min_value=0.0, step=0.1, value=current_weight_kg)
-        if st.button("Actualizar Peso"):
+        new_weight = st.number_input("Nuevo Peso (kg)", min_value=0.0, step=0.1, value=current_weight_kg, key="new_weight_input", aria_label="New Weight")
+        if st.button("Actualizar Peso", key="update_weight_button", aria_label="Update Weight"):
             update_user_weight(username, new_weight)
             st.success("¡Peso actualizado exitosamente!")
 

@@ -31,12 +31,17 @@ def main():
 
     if not st.session_state["authenticated"]:
         st.sidebar.title("Iniciar Sesión / Registrarse")
-        auth_choice = st.sidebar.radio("Seleccione una opción", ["Iniciar Sesión", "Registrarse"])
+        auth_choice = st.sidebar.radio(
+            "Seleccione una opción de autenticación", 
+            ["Iniciar Sesión", "Registrarse"],
+            key="auth_choice",
+            format_func=lambda x: x,
+        )
 
         if auth_choice == "Iniciar Sesión":
-            username = st.sidebar.text_input("Nombre de Usuario")
-            password = st.sidebar.text_input("Contraseña", type="password")
-            if st.sidebar.button("Iniciar Sesión"):
+            username = st.sidebar.text_input("Nombre de Usuario", key="login_username")
+            password = st.sidebar.text_input("Contraseña", type="password", key="login_password")
+            if st.sidebar.button("Iniciar Sesión", key="login_button"):
                 if authenticate_user(username, password):
                     st.session_state["authenticated"] = True
                     st.session_state["username"] = username
@@ -47,13 +52,14 @@ def main():
                     st.error("Nombre de usuario o contraseña inválidos.")
 
         elif auth_choice == "Registrarse":
-            username = st.sidebar.text_input("Nombre de Usuario")
-            password = st.sidebar.text_input("Contraseña", type="password")
-            start_date_plan = st.sidebar.date_input("Fecha de Inicio del Plan")
-            current_weight_kg = st.sidebar.number_input("Peso Actual (kg)", min_value=0.0, step=0.1)
-            if st.sidebar.button("Registrarse"):
+            username = st.sidebar.text_input("Nombre de Usuario", key="register_username")
+            password = st.sidebar.text_input("Contraseña", type="password", key="register_password")
+            start_date_plan = st.sidebar.date_input("Fecha de Inicio del Plan", key="register_start_date")
+            current_weight_kg = st.sidebar.number_input("Peso Actual (kg)", min_value=0.0, step=0.1, key="register_weight")
+            if st.sidebar.button("Registrarse", key="register_button"):
                 register_user(username, password, start_date_plan, current_weight_kg)
                 st.success("¡Registro exitoso! Por favor, inicie sesión.")
+                st.sidebar.markdown('<div data-testid="register_button"></div>', unsafe_allow_html=True)
 
     if st.session_state["authenticated"]:
         st.sidebar.title("Navegación")
@@ -61,11 +67,12 @@ def main():
         st.write(f"¡Bienvenido/a, {st.session_state['username']}!")
 
         if st.sidebar.button("Cerrar Sesión"):
-            cookies.delete("username")
+            cookies["username"] = ""
             cookies.save()
             st.session_state["authenticated"] = False
             st.session_state["username"] = None
-            st.experimental_rerun()
+            st.session_state.clear()
+            st.experimental_set_query_params()
 
 if __name__ == "__main__":
     main()
