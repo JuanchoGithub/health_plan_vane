@@ -65,6 +65,12 @@ def main():
         st.sidebar.title("Navegación")
         st.sidebar.write("Seleccione una página desde la barra lateral.")
         st.write(f"¡Bienvenido/a, {st.session_state['username']}!")
+        st.info("👈 Utiliza el menú de la izquierda para navegar por las secciones de la aplicación.", icon="ℹ️")
+
+        # Show toast only once per session
+        if 'sidebar_toast_shown' not in st.session_state:
+            st.toast('👈 ¡Usa el menú para navegar!', icon='⬅️')
+            st.session_state['sidebar_toast_shown'] = True
 
         if st.sidebar.button("Cerrar Sesión"):
             cookies["username"] = ""
