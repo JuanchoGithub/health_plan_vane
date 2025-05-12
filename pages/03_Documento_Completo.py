@@ -26,4 +26,4 @@ with open(file_path, "r", encoding="utf-8") as file:
     markdown_content = file.read()
 
 # Streamlit page to display the content
-st.markdown(markdown_content, unsafe_allow_html=True, key="document_markdown")
+st.markdown(markdown_content, unsafe_allow_html=True)

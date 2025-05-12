@@ -73,11 +73,11 @@ def backfill_data():
         # Backfill Exercises Form
         st.write("### Backfill Ejercicios")
         with st.form("backfill_exercise_form"):
-            selected_exercise = st.selectbox("Seleccione un Ejercicio", options=list(exercise_options.keys()), key="exercise_select", aria_label="Select Exercise")
+            selected_exercise = st.selectbox("Seleccione un Ejercicio", options=list(exercise_options.keys()), key="exercise_select")
 
-            sets = st.number_input("Series", min_value=1, step=1, key="sets_input", aria_label="Number of Sets")
-            reps = st.number_input("Repeticiones", min_value=1, step=1, key="reps_input", aria_label="Number of Reps")
-            duration = st.number_input("Duración (segundos)", min_value=1, step=1, key="duration_input", aria_label="Duration in Seconds")
+            sets = st.number_input("Series", min_value=1, step=1, key="sets_input")
+            reps = st.number_input("Repeticiones", min_value=1, step=1, key="reps_input")
+            duration = st.number_input("Duración (segundos)", min_value=1, step=1, key="duration_input")
 
             st.write("Notas sobre Dolor")
             pain_notes = st.radio(
@@ -85,11 +85,10 @@ def backfill_data():
                 options=["😊", "😐", "😖"],
                 horizontal=True,
                 label_visibility="collapsed",
-                key="pain_notes_radio",
-                aria_label="Pain Notes"
+                key="pain_notes_radio"
             )
 
-            backfill_date = st.date_input("Fecha del Ejercicio", key="exercise_date_input", aria_label="Exercise Date")
+            backfill_date = st.date_input("Fecha del Ejercicio", key="exercise_date_input")
 
             if st.form_submit_button("Registrar Ejercicio Atrasado"):
                 exercise_id = exercise_options[selected_exercise]
@@ -99,11 +98,11 @@ def backfill_data():
         # Backfill Meals Form
         st.write("### Backfill Comidas")
         with st.form("backfill_meal_form"):
-            meal_type = st.selectbox("Tipo de Comida", ["Desayuno", "Almuerzo", "Cena", "Merienda"], key="meal_type_select", aria_label="Meal Type")
-            description = st.text_input("Descripción", key="meal_description_input", aria_label="Meal Description")
-            calories = st.number_input("Calorías (kcal)", min_value=1, step=1, key="calories_input", aria_label="Calories")
-            protein = st.number_input("Proteínas (g)", min_value=0.1, step=0.1, key="protein_input", aria_label="Protein")
-            backfill_date = st.date_input("Fecha de la Comida", key="meal_date_input", aria_label="Meal Date")
+            meal_type = st.selectbox("Tipo de Comida", ["Desayuno", "Almuerzo", "Cena", "Merienda"], key="meal_type_select")
+            description = st.text_input("Descripción", key="meal_description_input")
+            calories = st.number_input("Calorías (kcal)", min_value=1, step=1, key="calories_input")
+            protein = st.number_input("Proteínas (g)", min_value=0.1, step=0.1, key="protein_input")
+            backfill_date = st.date_input("Fecha de la Comida", key="meal_date_input")
 
             if st.form_submit_button("Registrar Comida Atrasada"):
                 if not description:

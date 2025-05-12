@@ -55,14 +55,24 @@ def profile_management():
         st.write(f"**Peso Actual:** {current_weight_kg} kg")
 
         st.subheader("Actualizar Peso")
-        new_weight = st.number_input("Nuevo Peso (kg)", min_value=0.0, step=0.1, value=current_weight_kg, key="new_weight_input", aria_label="New Weight")
-        if st.button("Actualizar Peso", key="update_weight_button", aria_label="Update Weight"):
-            update_user_weight(username, new_weight)
-            st.success("¡Peso actualizado exitosamente!")
+        with st.form("update_weight_form"):
+            new_weight = st.number_input("Nuevo Peso (kg)", min_value=0.0, step=0.1, value=current_weight_kg, key="new_weight_input")
+            # Use st.form_submit_button inside a form
+            submitted = st.form_submit_button("Actualizar Peso")
+            if submitted:
+                update_user_weight(username, new_weight)
+                st.success("¡Peso actualizado exitosamente!")
+
+        # Re-fetching data after update for immediate reflection:
+        if submitted:
+             user_data = get_user_data(username) # Re-fetch data to get the updated weight
+             if user_data:
+                 _, current_weight_kg = user_data # Update current_weight_kg for calculations below
 
         st.subheader("Metas Diarias")
-        protein_target_min = round(new_weight * 1.6, 1)
-        protein_target_max = round(new_weight * 2.2, 1)
+        # Use the potentially updated current_weight_kg for calculations
+        protein_target_min = round(current_weight_kg * 1.6, 1)
+        protein_target_max = round(current_weight_kg * 2.2, 1)
         calorie_target = 2000  # Default calorie target
 
         st.write(f"**Proteínas Objetivo:** {protein_target_min}-{protein_target_max} g")

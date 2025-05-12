@@ -242,9 +242,9 @@ def dashboard():
         # Optimize layout using collapsible sections
         with st.expander("Resumen Diario", expanded=True):
             st.write("### Resumen Diario")
-            st.metric("Calorías Consumidas", f"{logged_calories}/{calorie_target} kcal", delta=logged_calories - calorie_target, key="calories_metric")
-            st.metric("Proteínas Consumidas", f"{logged_protein}/{protein_target_min}-{protein_target_max} g", delta=logged_protein - protein_target_min, key="protein_metric")
-            st.metric("Ejercicios Completados", f"{len(completed_exercises)}/{len(unique_exercises)}", key="exercises_metric")
+            st.metric("Calorías Consumidas", f"{logged_calories}/{calorie_target} kcal", delta=logged_calories - calorie_target)
+            st.metric("Proteínas Consumidas", f"{logged_protein}/{protein_target_min}-{protein_target_max} g", delta=logged_protein - protein_target_min)
+            st.metric("Ejercicios Completados", f"{len(completed_exercises)}/{len(unique_exercises)}")
 
         with st.expander("Progreso de Hoy", expanded=True):
             st.write("### Progreso de Hoy")
@@ -311,7 +311,7 @@ def dashboard():
                         st.warning("Este ejercicio aún no se ha completado.")
 
                         # Add a button to log default exercise completion with actual defaults
-                        if st.button(f"Registrar como completado - {exercise_name}", key=f"log_{exercise_id}", aria_label=f"Complete {exercise_name}"):
+                        if st.button(f"Registrar como completado - {exercise_name}", key=f"log_{exercise_id}"):
                             default_sets, default_reps, default_duration = get_exercise_defaults(exercise_id)
                             log_exercise(user_id, exercise_id, default_sets, default_reps, default_duration, "")
                             st.success(f"¡Ejercicio '{exercise_name}' registrado exitosamente con valores predeterminados!")
@@ -358,13 +358,15 @@ def dashboard():
 
             st.write("### Registrar Comida")
             st.write("Ingrese los detalles de las comidas que consumió hoy.")
-            with st.form("log_meal_form", key="log_meal_form", aria_label="Log Meal Form"):
-                meal_type = st.selectbox("Tipo de Comida", ["Desayuno", "Almuerzo", "Cena", "Merienda"], key="meal_type_select", aria_label="Meal Type")
-                description = st.text_input("Descripción", key="meal_description", aria_label="Meal Description")
-                calories = st.number_input("Calorías (kcal)", min_value=0, step=1, key="meal_calories", aria_label="Meal Calories")
-                protein = st.number_input("Proteínas (g)", min_value=0.0, step=0.1, key="meal_protein", aria_label="Meal Protein")
-                if st.form_submit_button("Registrar Comida", key="submit_meal", aria_label="Submit Meal"):
-                    log_meal(username, meal_type, description, calories, protein)
+            with st.form(key="log_meal_form"):
+                meal_type = st.selectbox("Tipo de Comida", ["Desayuno", "Almuerzo", "Cena", "Merienda"], key="meal_type_select")
+                description = st.text_input("Descripción", key="meal_description")
+                calories = st.number_input("Calorías (kcal)", min_value=0, step=1, key="meal_calories")
+                protein = st.number_input("Proteínas (g)", min_value=0.0, step=0.1, key="meal_protein")
+                # The submit button must be called directly within the form block and does not accept a 'key' argument.
+                submitted = st.form_submit_button("Registrar Comida")
+                if submitted:
+                    log_meal(user_id, meal_type, description, calories, protein)
                     st.success("¡Comida registrada exitosamente!")
 
         with tabs[1]:

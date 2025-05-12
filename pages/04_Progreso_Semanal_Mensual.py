@@ -88,8 +88,8 @@ def progreso():
 
             # Add filters for date ranges
             st.write("### Filtrar por Rango de Fechas")
-            start_date = st.date_input("Fecha de Inicio", value=pd.to_datetime("2025-01-01"), key="start_date_input", aria_label="Start Date")
-            end_date = st.date_input("Fecha de Fin", value=pd.to_datetime("2025-05-10"), key="end_date_input", aria_label="End Date")
+            start_date = st.date_input("Fecha de Inicio", value=pd.to_datetime("2025-01-01"), key="start_date_input")
+            end_date = st.date_input("Fecha de Fin", value=pd.to_datetime("2025-05-10"), key="end_date_input")
 
             filtered_weekly_data = weekly_data[(weekly_data["Fecha"] >= pd.to_datetime(start_date)) & (weekly_data["Fecha"] <= pd.to_datetime(end_date))]
             filtered_weekly_summary = filtered_weekly_data.groupby(filtered_weekly_data["Fecha"].dt.isocalendar().week).sum(numeric_only=True).reset_index()
@@ -110,7 +110,7 @@ def progreso():
 
             # Add a comparison feature
             st.write("### Comparar Progreso")
-            comparison_week = st.selectbox("Seleccione una Semana para Comparar", weekly_summary["Semana"], key="comparison_week_select", aria_label="Comparison Week")
+            comparison_week = st.selectbox("Seleccione una Semana para Comparar", weekly_summary["Semana"], key="comparison_week_select")
             comparison_data = weekly_summary[weekly_summary["Semana"] == comparison_week]
             st.write(f"Comparación para la Semana {comparison_week}")
             st.dataframe(comparison_data)
