@@ -21,7 +21,7 @@ if not st.session_state["authenticated"]:
     st.stop()
 
 # Load the content of the markdown file
-file_path = "Plan de 3 meses para ciática y ganancia muscular.markdown"
+file_path = "documentation/PLAN.markdown"
 with open(file_path, "r", encoding="utf-8") as file:
     markdown_content = file.read()
 
