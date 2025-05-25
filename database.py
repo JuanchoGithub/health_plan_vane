@@ -40,10 +40,12 @@ def initialize_database():
         user_id INTEGER NOT NULL,
         date DATE NOT NULL,
         meal_type TEXT NOT NULL,
+        food_id INTEGER, -- Added food_id
         description TEXT,
         calories_kcal INTEGER,
         protein_g REAL,
-        FOREIGN KEY(user_id) REFERENCES users(user_id)
+        FOREIGN KEY(user_id) REFERENCES users(user_id),
+        FOREIGN KEY(food_id) REFERENCES food_data(id) -- Added foreign key
     )
     ''')
 
@@ -88,6 +90,37 @@ def initialize_exercise_plan():
             description = excluded.description,
             notes = excluded.notes
         ''', exercise)
+
+    conn.commit()
+    conn.close()
+
+def initialize_food_data():
+    conn = create_connection()
+    cursor = conn.cursor()
+
+    # Create food_data table
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS food_data (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        category TEXT NOT NULL,
+        name TEXT NOT NULL UNIQUE,
+        calories TEXT NOT NULL,
+        proteins TEXT NOT NULL
+    )
+    ''')
+
+    # food_data is imported from food_data.py
+    from food_data import FOOD_DATA
+
+    for food_item in FOOD_DATA:
+        try:
+            cursor.execute('''
+            INSERT INTO food_data (category, name, calories, proteins)
+            VALUES (?, ?, ?, ?)
+            ''', (food_item['category'], food_item['name'], food_item['calories'], food_item['proteins']))
+        except sqlite3.IntegrityError:
+            # This handles cases where a food item with the same name already exists
+            print(f"Food item '{food_item['name']}' already exists in the database. Skipping.")
 
     conn.commit()
     conn.close()
@@ -145,6 +178,30 @@ def update_exercise_logs_schema():
         cursor.execute('''
         ALTER TABLE exercise_logs ADD COLUMN exercise_id INTEGER REFERENCES exercise_plan(id)
         ''')
+
+    conn.commit()
+    conn.close()
+
+def update_food_logs_schema_for_food_data_integration():
+    conn = create_connection()
+    cursor = conn.cursor()
+
+    # Check if the food_id column already exists
+    cursor.execute("PRAGMA table_info(food_logs)")
+    columns = [column[1] for column in cursor.fetchall()]
+    
+    if "food_id" not in columns:
+        cursor.execute('''
+        ALTER TABLE food_logs ADD COLUMN food_id INTEGER REFERENCES food_data(id)
+        ''')
+        print("Added food_id column to food_logs table.")
+    else:
+        # Even if column exists, foreign key might not.
+        # SQLite doesn't directly support ADD CONSTRAINT for foreign keys on existing columns easily
+        # without recreating the table. For simplicity, we'll assume if food_id exists,
+        # it was added with the FK by initialize_database or a previous run of this.
+        # A more robust migration would involve table recreation.
+        print("food_id column already exists in food_logs.")
 
     conn.commit()
     conn.close()
@@ -333,11 +390,13 @@ def optimize_database():
 if __name__ == "__main__":
     initialize_database()
     update_exercise_logs_schema()  # Ensure schema is updated before initializing the exercise plan
+    update_food_logs_schema_for_food_data_integration() # Add food_id to food_logs
     remove_exercise_name_column()  # Remove redundant exercise_name column
     update_exercise_plan_schema()
     add_default_columns_to_exercise_plan()  # Ensure default columns are added to the schema
     verify_and_update_exercise_plan_schema()  # Verify and update schema
     initialize_exercise_plan()
+    initialize_food_data()  # Initialize food data
 
     # Update default values in the exercise_plan table
     update_default_values_in_exercise_plan()

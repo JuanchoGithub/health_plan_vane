@@ -1,11 +1,11 @@
 import streamlit as st
 from auth import authenticate_user, register_user
 from database import initialize_database
+# Initialize cookie manager
 from streamlit_cookies_manager import EncryptedCookieManager
 
 st.set_page_config(page_title="Plan de Salud de 3 Meses", layout="wide")
 
-# Initialize cookie manager
 cookies = EncryptedCookieManager(
     password="a_secure_password_for_encryption"  # Replace with a secure password
 )
@@ -79,6 +79,20 @@ def main():
             st.session_state["username"] = None
             st.session_state.clear()
             st.experimental_set_query_params()
+
+    if not st.session_state["authenticated"]:
+        st.title("Iniciar Sesión")
+        username = st.text_input("Nombre de Usuario", key="main_login_username")
+        password = st.text_input("Contraseña", type="password", key="main_login_password")
+        if st.button("Iniciar Sesión", key="main_login_button"):
+            if authenticate_user(username, password):
+                st.session_state["authenticated"] = True
+                st.session_state["username"] = username
+                cookies["username"] = username
+                cookies.save()
+                st.experimental_rerun()
+            else:
+                st.error("Nombre de usuario o contraseña incorrectos.")
 
 if __name__ == "__main__":
     main()

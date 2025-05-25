@@ -239,58 +239,14 @@ def dashboard():
         if logged_protein < protein_target_min:
             st.warning(f"Te faltan {protein_target_min - logged_protein} g de proteínas para alcanzar tu meta mínima diaria.")
 
-        # Optimize layout using collapsible sections
-        with st.expander("Resumen Diario", expanded=True):
-            st.write("### Resumen Diario")
-            st.metric("Calorías Consumidas", f"{logged_calories}/{calorie_target} kcal", delta=logged_calories - calorie_target)
-            st.metric("Proteínas Consumidas", f"{logged_protein}/{protein_target_min}-{protein_target_max} g", delta=logged_protein - protein_target_min)
-            st.metric("Ejercicios Completados", f"{len(completed_exercises)}/{len(unique_exercises)}")
-
-        with st.expander("Progreso de Hoy", expanded=True):
-            st.write("### Progreso de Hoy")
-            st.metric("Calorías Consumidas", f"{logged_calories}/{calorie_target} kcal", delta=logged_calories - calorie_target)
-            st.metric("Proteínas Consumidas", f"{logged_protein} g", delta=logged_protein - protein_target_min)
-
-            calorie_progress = min(int((logged_calories / calorie_target) * 100), 100)
-            protein_progress = min(int((logged_protein / protein_target_min) * 100), 100)
-
-            st.progress(calorie_progress, text=f"Calorías: {logged_calories}/{calorie_target} kcal")
-            st.caption(f"Progreso de Calorías: {calorie_progress}%")
-
-            st.progress(protein_progress, text=f"Proteínas: {logged_protein}/{protein_target_min}-{protein_target_max} g")
-            st.caption(f"Progreso de Proteínas: {protein_progress}%")
-
-        with st.expander("Resumen de Ejercicios", expanded=True):
-            st.write("### Resumen de Ejercicios")
-            # Ensure completed exercises are correctly reflected in the Resumen de Ejercicios table
-            exercise_data = []
-            if unique_exercises:
-                for exercise_id, exercise_name, description, media_path in unique_exercises.values():
-                    is_completed = exercise_id in completed_exercises
-                    status = "Completado" if is_completed else "Pendiente"
-                    sets, reps, duration = (completed_exercises[exercise_id][1:4] if is_completed else ("-", "-", "-"))
-                    notes = "Ejercicio completado correctamente" if is_completed else ""
-                    exercise_data.append({
-                        "Ejercicio": exercise_name,
-                        "Estado": status,
-                        "Series": sets,
-                        "Repeticiones": reps,
-                        "Duración (s)": duration,
-                        "Notas": notes
-                    })
-
-            # Update exercise_df if exercise_data is populated
-            exercise_df = pd.DataFrame(exercise_data) if exercise_data else pd.DataFrame(columns=["Ejercicio", "Estado", "Series", "Repeticiones", "Duración (s)", "Notas"])
-            st.dataframe(exercise_df)
-
         # Organize sections using tabs
         tabs = st.tabs(["Progreso Diario", "Resumen Semanal", "Resumen Mensual"])
 
         with tabs[0]:
             # Daily progress content
             st.write("### Metas de Hoy")
-            st.metric("Calorías Objetivo", f"{calorie_target} kcal")
-            st.metric("Proteínas Objetivo", f"{protein_target_min}-{protein_target_max} g")
+            st.metric("Calorías", f"{logged_calories}/{calorie_target} kcal", delta=logged_calories - calorie_target)
+            st.metric("Proteínas", f"{logged_protein}/{protein_target_min}-{protein_target_max} g", delta=logged_protein - protein_target_min)
 
             st.write("### Esto es lo que te falta hacer hoy")
             for exercise_id, exercise_name, description, media_path in unique_exercises.values():
