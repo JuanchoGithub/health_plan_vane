@@ -312,18 +312,70 @@ def dashboard():
             else:
                 st.warning("Debe seleccionar un ejercicio para registrar un ejercicio personalizado.")
 
+            # Update the food intake logging section to include a 'Todos' option
             st.write("### Registrar Comida")
-            st.write("Ingrese los detalles de las comidas que consumió hoy.")
-            with st.form(key="log_meal_form"):
-                meal_type = st.selectbox("Tipo de Comida", ["Desayuno", "Almuerzo", "Cena", "Merienda"], key="meal_type_select")
-                description = st.text_input("Descripción", key="meal_description")
-                calories = st.number_input("Calorías (kcal)", min_value=0, step=1, key="meal_calories")
-                protein = st.number_input("Proteínas (g)", min_value=0.0, step=0.1, key="meal_protein")
-                # The submit button must be called directly within the form block and does not accept a 'key' argument.
-                submitted = st.form_submit_button("Registrar Comida")
-                if submitted:
-                    log_meal(user_id, meal_type, description, calories, protein)
-                    st.success("¡Comida registrada exitosamente!")
+            st.write("Seleccione una categoría y un alimento para registrar su ingesta de comida, o use la opción 'Todos' para buscar directamente.")
+
+            # Fetch categories and all food items from the food_data table
+            conn = sqlite3.connect("health_plan.db")
+            cursor = conn.cursor()
+            cursor.execute("SELECT DISTINCT category FROM food_data")
+            categories = [row[0] for row in cursor.fetchall()]
+
+            cursor.execute("SELECT name, category, calories, proteins FROM food_data")
+            all_food_items = cursor.fetchall()
+
+            selected_category = st.selectbox("Seleccione una categoría", ["", "Todos"] + categories)
+
+            if selected_category == "Todos":
+                # Allow user to search for food items by name
+                food_names = [item[0] for item in all_food_items]
+                selected_food = st.selectbox("Busque un alimento", [""] + food_names)
+
+                if selected_food:
+                    # Find the selected food's details and backpopulate the category
+                    food_details = next((item for item in all_food_items if item[0] == selected_food), None)
+                    if food_details:
+                        selected_category, default_calories, default_protein = food_details[1], food_details[2], food_details[3]
+
+                        with st.form(key="log_food_form_todos"):
+                            calories = st.number_input("Calorías (kcal)", min_value=0, step=1, value=default_calories)
+                            protein = st.number_input("Proteínas (g)", min_value=0.0, step=0.1, value=default_protein)
+
+                            submitted = st.form_submit_button("Registrar Comida")
+                            if submitted:
+                                log_meal(user_id, selected_category, selected_food, calories, protein)
+                                st.success("¡Comida registrada exitosamente!")
+                    else:
+                        st.error("No se encontraron detalles para el alimento seleccionado.")
+
+            elif selected_category:
+                # Fetch food names within the selected category
+                food_items = [item for item in all_food_items if item[1] == selected_category]
+                food_names = [item[0] for item in food_items]
+
+                selected_food = st.selectbox("Seleccione un alimento", [""] + food_names)
+
+                if selected_food:
+                    # Find the selected food's details
+                    food_details = next((item for item in food_items if item[0] == selected_food), None)
+                    if food_details:
+                        default_calories, default_protein = food_details[2], food_details[3]
+
+                        with st.form(key="log_food_form_category"):
+                            calories = st.number_input("Calorías (kcal)", min_value=0, step=1, value=default_calories)
+                            protein = st.number_input("Proteínas (g)", min_value=0.0, step=0.1, value=default_protein)
+
+                            submitted = st.form_submit_button("Registrar Comida")
+                            if submitted:
+                                log_meal(user_id, selected_category, selected_food, calories, protein)
+                                st.success("¡Comida registrada exitosamente!")
+                    else:
+                        st.error("No se encontraron detalles para el alimento seleccionado.")
+            else:
+                st.warning("Debe seleccionar una categoría o usar la opción 'Todos' para continuar.")
+
+            conn.close()
 
         with tabs[1]:
             # Weekly summary content

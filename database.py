@@ -104,8 +104,8 @@ def initialize_food_data():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         category TEXT NOT NULL,
         name TEXT NOT NULL UNIQUE,
-        calories TEXT NOT NULL,
-        proteins TEXT NOT NULL
+        calories DECIMAL NOT NULL,
+        proteins DECIMAL NOT NULL
     )
     ''')
 
